@@ -18,7 +18,11 @@
     <input type="text" id="baseUrl" placeholder="https://example.com/"
       style="width: 100%; padding: 8px; box-sizing: border-box;">
   </div>
+  <div class="container" id="qr-container" style="flex-direction: column; align-items: center;">
+    <div id="qrcode"></div>
+  </div>
 
+  <script src="../qrcode.min.js"></script>
   <script src="popup.js"></script>
   <div id="footer" style="position: fixed; bottom: 5px; left: 0; width: 100%; text-align: center; font-size: 11px; color: #aaa; opacity: 0.7; z-index: 1000; pointer-events: none;">
     <span id="plugin-version"></span> <span style="margin-left: 10px;">by VladislavSumin</span>
