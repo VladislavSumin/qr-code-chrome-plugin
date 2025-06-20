@@ -18,4 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
       baseUrl: baseUrlInput.value.trim()
     });
   });
+
+  const manifest = chrome.runtime.getManifest();
+  const version = manifest.version;
+  const versionSpan = document.getElementById('plugin-version');
+  if (versionSpan) {
+    versionSpan.textContent = `v${version}`;
+  }
 });
