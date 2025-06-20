@@ -1,6 +1,6 @@
 const PATH_REGEX = /(?:\b|\/)(?:[a-z0-9\-._~!$&'()*+,;=:@]+)(?:\/[a-z0-9\-._~!$&'()*+,;=:@]+)*(\?[a-z0-9\-._~!$&'()*+,;=:@%&=+]*|)/gi;
 let qrLibLoaded = false;
-let isEnabled = true;
+let isEnabled = false;
 
 // Загрузка библиотеки QRCode
 function loadQRCodeLib(callback) {
@@ -217,7 +217,7 @@ const observer = new MutationObserver(mutations => {
     break;
   }
   
-  if (needsScan) {
+  if (needsScan && isEnabled) {
     scanForPaths();
   }
 });
