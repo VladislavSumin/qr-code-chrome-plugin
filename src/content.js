@@ -185,6 +185,17 @@ function scanForPaths() {
   attachListenersToNewElements();
 }
 
+// Функция для удаления всех подсвеченных ссылок
+function removeAllQRPaths() {
+  document.querySelectorAll('.qr-path').forEach(el => {
+    const parent = el.parentNode;
+    if (!parent) return;
+    // Заменяем span на его текстовое содержимое
+    parent.replaceChild(document.createTextNode(el.textContent), el);
+    parent.normalize && parent.normalize();
+  });
+}
+
 // Инициализация
 chrome.storage.sync.get(['enabled'], ({ enabled = true }) => {
   isEnabled = enabled;
@@ -224,6 +235,7 @@ chrome.storage.onChanged.addListener(changes => {
     
     if (!isEnabled) {
       document.querySelectorAll('#qr-popup').forEach(el => el.remove());
+      removeAllQRPaths(); // Удаляем все подсвеченные ссылки
     } else {
       scanForPaths();
     }
