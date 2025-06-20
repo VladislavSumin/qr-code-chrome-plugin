@@ -38,13 +38,20 @@ function createQRPopup(url, x, y) {
     padding: 10px;
     border: 1px solid #ccc;
     box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    max-width: 180px;
+    max-width: 270px;
   `;
 
   const qrContainer = document.createElement('div');
   qrContainer.id = 'qr-code';
-  qrContainer.style.cssText = 'width: 128px; height: 128px;';
+  qrContainer.style.cssText = 'width: 192px; height: 192px; margin: 0 auto;';
   popup.appendChild(qrContainer);
+
+  // Добавляем контейнер для URL
+  const urlContainer = document.createElement('div');
+  urlContainer.id = 'qr-url';
+  urlContainer.style.cssText = 'margin-top: 10px; word-break: break-all; font-size: 12px; color: #333; text-align: center; max-width: 250px;';
+  urlContainer.textContent = url;
+  popup.appendChild(urlContainer);
   
   document.body.appendChild(popup);
   
@@ -59,20 +66,20 @@ function createQRPopup(url, x, y) {
       if (typeof QRCode !== 'undefined') {
         new QRCode(qrContainer, {
           text: url,
-          width: 128,
-          height: 128,
+          width: 192,
+          height: 192,
           colorDark: "#000000",
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.H
         });
       } else {
-        qrContainer.innerHTML = `<div style="width:128px;height:128px;display:flex;align-items:center;justify-content:center;color:red;font-size:12px;">
+        qrContainer.innerHTML = `<div style="width:192px;height:192px;display:flex;align-items:center;justify-content:center;color:red;font-size:12px;">
           QR lib not loaded
         </div>`;
       }
     });
   } catch (e) {
-    qrContainer.innerHTML = `<div style="width:128px;height:128px;display:flex;align-items:center;justify-content:center;color:red;font-size:12px;">
+    qrContainer.innerHTML = `<div style="width:192px;height:192px;display:flex;align-items:center;justify-content:center;color:red;font-size:12px;">
       Invalid URL
     </div>`;
   }
