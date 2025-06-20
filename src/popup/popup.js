@@ -8,14 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   toggle.addEventListener('change', () => {
-    console.log('VS: Toggle changed:', toggle.checked);
     chrome.storage.sync.set({
       enabled: toggle.checked
     });
   });
 
   baseUrlInput.addEventListener('input', () => {
-    console.log('VS: Input change:', baseUrlInput.value.trim());
     chrome.storage.sync.set({
       baseUrl: baseUrlInput.value.trim()
     });

@@ -1,34 +1,25 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <style>
-    body { width: 300px; padding: 15px; font-family: Arial, sans-serif; }
-    .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
-    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
-    .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-    input:checked + .slider { background-color: #2196F3; }
-    input:checked + .slider:before { transform: translateX(26px); }
-    .hidden { display: none; }
-    .container { margin-bottom: 15px; }
-    button { margin-top: 10px; padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    .url-container { margin-top: 10px; }
-  </style>
+  <link rel="stylesheet" href="popup.css">
 </head>
+
 <body>
-  <div class="container">
-    <label>Enable QR Generation:</label>
+  <div class="container" style="display: flex; justify-content: center; align-items: center;">
     <label class="switch">
       <input type="checkbox" id="toggle">
       <span class="slider"></span>
     </label>
   </div>
-  
-  <!-- Исправленная секция для базового URL -->
+
   <div class="container url-container">
     <label for="baseUrl" style="display: block; margin-bottom: 5px;">Base URL:</label>
-    <input type="text" id="baseUrl" placeholder="https://example.com/" style="width: 100%; padding: 8px; box-sizing: border-box;">
+    <input type="text" id="baseUrl" placeholder="https://example.com/"
+      style="width: 100%; padding: 8px; box-sizing: border-box;">
   </div>
-  
+
   <script src="popup.js"></script>
 </body>
+
 </html>
