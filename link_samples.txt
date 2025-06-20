@@ -6,3 +6,4 @@ https://www.google.com/search?q=qr_code
 /test
 /test/content
 /test/content?test=demo
+/test?foo=bar&x=1
