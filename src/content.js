@@ -134,7 +134,6 @@ function handleClick(e) {
 function scanForPaths() {
   if (!isEnabled) return;
 
-  // Находим только новые текстовые узлы
   const walker = document.createTreeWalker(
     document.body,
     NodeFilter.SHOW_TEXT,
@@ -146,38 +145,44 @@ function scanForPaths() {
     },
     false
   );
-  
+
   while (walker.nextNode()) {
     const node = walker.currentNode;
     const content = node.textContent;
-    
+
+    // Сначала собираем все совпадения
+    let matches = [];
     let match;
+    PATH_REGEX.lastIndex = 0;
     while ((match = PATH_REGEX.exec(content)) !== null) {
       const path = match[0];
       if (path.split('/').length < 2) continue;
-      
-      // Проверяем, не пересекается ли диапазон с существующими обертками
+      matches.push({
+        start: match.index,
+        end: match.index + path.length,
+        path
+      });
+    }
+
+    // Оборачиваем с конца, чтобы не сбивать индексы
+    for (let i = matches.length - 1; i >= 0; i--) {
+      const { start, end, path } = matches[i];
       const range = document.createRange();
-      range.setStart(node, match.index);
-      range.setEnd(node, match.index + path.length);
-      
-      if (range.toString() !== path) continue;
-      
-      // Создаем обертку
-      const wrapper = document.createElement('span');
-      wrapper.className = 'qr-path';
-      wrapper.style.cssText = 'border-bottom: 1px dashed #666; cursor: pointer;';
-      wrapper.title = `Click to copy: ${path}`;
-      
       try {
+        range.setStart(node, start);
+        range.setEnd(node, end);
+        if (range.toString() !== path) continue;
+        const wrapper = document.createElement('span');
+        wrapper.className = 'qr-path';
+        wrapper.style.cssText = 'border-bottom: 1px dashed #666; cursor: pointer;';
+        wrapper.title = `Click to copy: ${path}`;
         range.surroundContents(wrapper);
       } catch (e) {
         console.warn("Could not wrap path", e);
       }
     }
   }
-  
-  // Добавляем обработчики только к новым элементам
+
   attachListenersToNewElements();
 }
 

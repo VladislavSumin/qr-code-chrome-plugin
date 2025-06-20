@@ -1,22 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('toggle');
   const baseUrlInput = document.getElementById('baseUrl');
-  const saveBtn = document.getElementById('save');
 
   chrome.storage.sync.get(['enabled', 'baseUrl'], ({ enabled = true, baseUrl = '' }) => {
     toggle.checked = enabled;
     baseUrlInput.value = baseUrl;
   });
 
-  saveBtn.addEventListener('click', () => {
+  toggle.addEventListener('change', () => {
+    console.log('VS: Toggle changed:', toggle.checked);
     chrome.storage.sync.set({
-      enabled: toggle.checked,
+      enabled: toggle.checked
+    });
+  });
+
+  baseUrlInput.addEventListener('input', () => {
+    console.log('VS: Input change:', baseUrlInput.value.trim());
+    chrome.storage.sync.set({
       baseUrl: baseUrlInput.value.trim()
-    }, () => {
-      alert('Settings saved!');
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.reload(tabs[0].id);
-      });
     });
   });
 });
