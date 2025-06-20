@@ -1,4 +1,4 @@
-const PATH_REGEX = /(?:\b|\/)(?:[a-z0-9\-._~!$&'()*+,;=:@]\/?)+\/[a-z0-9\-._~!$&'()*+,;=:@]*/gi;
+const PATH_REGEX = /(?:\b|\/)(?:[a-z0-9\-._~!$&'()*+,;=:@]+)(?:\/[a-z0-9\-._~!$&'()*+,;=:@]+)*/gi;
 let qrLibLoaded = false;
 let isEnabled = true;
 
@@ -156,7 +156,6 @@ function scanForPaths() {
     PATH_REGEX.lastIndex = 0;
     while ((match = PATH_REGEX.exec(content)) !== null) {
       const path = match[0];
-      if (path.split('/').length < 2) continue;
       matches.push({
         start: match.index,
         end: match.index + path.length,
