@@ -1,4 +1,4 @@
-const PATH_REGEX = /(?:\b|\/)(?:[a-z0-9\-._~!$&'()*+,;=:@]+)(?:\/[a-z0-9\-._~!$&'()*+,;=:@]+)*(\?[a-z0-9\-._~!$&'()*+,;=:@%&=+]*|)/gi;
+const PATH_REGEX = /(https?:\/\/[^\s"'<>]+)|(?:\b|\/)(?:[a-z0-9\-._~!$&'()*+,;=:@]+)(?:\/[a-z0-9\-._~!$&'()*+,;=:@]+)*(\?[a-z0-9\-._~!$&'()*+,;=:@%&=+]*|)/gi;
 let qrLibLoaded = false;
 let isEnabled = false;
 
@@ -102,13 +102,16 @@ function handleMouseEnter(e) {
     const path = target.textContent.trim();
     
     try {
-      const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-      const cleanPath = path.startsWith('/') ? path : `/${path}`;
-      const fullUrl = `${base}${cleanPath}`;
-      
+      let fullUrl;
+      if (/^https?:\/\//i.test(path)) {
+        fullUrl = path;
+      } else {
+        const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+        const cleanPath = path.startsWith('/') ? path : `/${path}`;
+        fullUrl = `${base}${cleanPath}`;
+      }
       target.dataset.originalTitle = target.title || '';
       target.title = '';
-      
       createQRPopup(fullUrl, e.pageX + 15, e.pageY + 15);
     } catch (error) {
       console.error("Error creating QR code:", error);
