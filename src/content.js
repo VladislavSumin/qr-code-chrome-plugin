@@ -8,7 +8,6 @@ function attachListenersToNewElements() {
     
     el.addEventListener('mouseenter', handleMouseEnter);
     el.addEventListener('mouseleave', handleMouseLeave);
-    el.addEventListener('click', handleClick);
   });
 }
 
@@ -41,17 +40,6 @@ function handleMouseLeave(e) {
   if (target.dataset.originalTitle) {
     target.title = target.dataset.originalTitle;
   }
-}
-
-function handleClick(e) {
-  const target = e.target;
-  const path = target.textContent.trim();
-  navigator.clipboard.writeText(path).then(() => {
-    target.style.borderColor = 'green';
-    setTimeout(() => {
-      target.style.borderColor = '#666';
-    }, 1000);
-  });
 }
 
 // Основная функция сканирования
