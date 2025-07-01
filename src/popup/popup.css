@@ -4,14 +4,14 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.switch {
+.toggle-switch {
     position: relative;
     display: inline-block;
     width: 80px;
     height: 44px;
 }
 
-.slider {
+.toggle-switch .slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -23,7 +23,7 @@ body {
     border-radius: 44px;
 }
 
-.slider:before {
+.toggle-switch .slider:before {
     position: absolute;
     content: "";
     height: 36px;
@@ -33,6 +33,18 @@ body {
     background-color: white;
     transition: .4s;
     border-radius: 50%;
+}
+
+.toggle-switch input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-switch input[type="checkbox"]:checked + .slider {
+    background-color: #2196F3;
+}
+
+.toggle-switch input[type="checkbox"]:checked + .slider:before {
+    transform: translateX(36px);
 }
 
 .hidden {
