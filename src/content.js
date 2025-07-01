@@ -86,7 +86,6 @@ function scanForPaths() {
         const wrapper = document.createElement('span');
         wrapper.className = 'qr-path';
         wrapper.style.cssText = 'border-bottom: 1px dashed #666; cursor: pointer;';
-        wrapper.title = `Click to copy: ${path}`;
         range.surroundContents(wrapper);
       } catch (e) {
         console.warn("Could not wrap path", e);
