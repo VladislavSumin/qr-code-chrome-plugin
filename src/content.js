@@ -23,13 +23,23 @@ function attachListenersToNewElements() {
 
 function handleMouseEnter(e) {
   const target = e.target;
-  chrome.storage.sync.get(['baseUrl'], ({ baseUrl = '' }) => {
+  chrome.storage.sync.get(['baseUrl', 'overrideBaseUrl'], ({ baseUrl = '', overrideBaseUrl = false }) => {
     const path = target.textContent.trim();
-    
     try {
       let fullUrl;
       if (/^https?:\/\//i.test(path)) {
-        fullUrl = path;
+        if (overrideBaseUrl && baseUrl) {
+          // Заменяем схему и хост на baseUrl
+          try {
+            const urlObj = new URL(path);
+            const baseObj = new URL(baseUrl);
+            fullUrl = baseObj.origin + urlObj.pathname + urlObj.search + urlObj.hash;
+          } catch (err) {
+            fullUrl = path; // fallback
+          }
+        } else {
+          fullUrl = path;
+        }
       } else {
         const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
         const cleanPath = path.startsWith('/') ? path : `/${path}`;

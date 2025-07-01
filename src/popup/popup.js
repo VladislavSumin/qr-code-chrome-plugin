@@ -1,16 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('toggle');
   const baseUrlInput = document.getElementById('baseUrl');
+  const overrideBaseUrlCheckbox = document.getElementById('overrideBaseUrl');
 
-  chrome.storage.sync.get(['enabled', 'baseUrl'], ({ enabled = true, baseUrl = '' }) => {
+  chrome.storage.sync.get(['enabled', 'baseUrl', 'overrideBaseUrl'], ({ enabled = true, baseUrl = '', overrideBaseUrl = false }) => {
     toggle.checked = enabled;
     baseUrlInput.value = baseUrl;
+    overrideBaseUrlCheckbox.checked = overrideBaseUrl;
     renderQR(baseUrlInput.value.trim());
   });
 
   toggle.addEventListener('change', () => {
     chrome.storage.sync.set({
       enabled: toggle.checked
+    });
+  });
+
+  overrideBaseUrlCheckbox.addEventListener('change', () => {
+    chrome.storage.sync.set({
+      overrideBaseUrl: overrideBaseUrlCheckbox.checked
     });
   });
 

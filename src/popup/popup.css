@@ -35,18 +35,6 @@ body {
     border-radius: 50%;
 }
 
-input[type="checkbox"] {
-    display: none;
-}
-
-input[type="checkbox"]:checked + .slider {
-    background-color: #2196F3;
-}
-
-input[type="checkbox"]:checked + .slider:before {
-    transform: translateX(36px);
-}
-
 .hidden {
     display: none;
 }
