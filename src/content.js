@@ -1,4 +1,5 @@
 const PATH_REGEX = /(https?:\/\/[^\s"'<>]+)|(?:\b|\/)(?:[a-z0-9\-._~!$&'()*+,;=:@]+)(?:\/[a-z0-9\-._~!$&'()*+,;=:@]+)*(\?[a-z0-9\-._~!$&'()*+,;=:@%&=+]*|)/gi;
+const LOG_TAG = '[QR-Plugin]';
 let isEnabled = false;
 
 // Функция для добавления обработчиков только к новым элементам
@@ -42,12 +43,14 @@ function handleMouseLeave(e) {
   }
 }
 
-// Основная функция сканирования
-function scanForPaths() {
+// Основная функция сканирования для указанного корня
+function scanForPathsIn(root) {
   if (!isEnabled) return;
 
+  let nodeCount = 0;
+
   const walker = document.createTreeWalker(
-    document.body,
+    root,
     NodeFilter.SHOW_TEXT,
     {
       acceptNode: node => 
@@ -60,6 +63,7 @@ function scanForPaths() {
 
   while (walker.nextNode()) {
     const node = walker.currentNode;
+    nodeCount++;
     const content = node.textContent;
 
     // Сначала собираем все совпадения
@@ -87,6 +91,7 @@ function scanForPaths() {
         wrapper.className = 'qr-path';
         wrapper.style.cssText = 'border-bottom: 1px dashed #666; cursor: pointer;';
         range.surroundContents(wrapper);
+        console.log(`${LOG_TAG} Добавлен спан для ссылки:`, path);
       } catch (e) {
         console.warn("Could not wrap path", e);
       }
@@ -94,6 +99,7 @@ function scanForPaths() {
   }
 
   attachListenersToNewElements();
+  console.log(`${LOG_TAG} Обработано текстовых нод: ${nodeCount}`);
 }
 
 // Функция для удаления всех подсвеченных ссылок
@@ -110,26 +116,40 @@ function removeAllQRPaths() {
 // Инициализация
 chrome.storage.sync.get(['enabled'], ({ enabled = true }) => {
   isEnabled = enabled;
-  scanForPaths();
+  scanForPathsIn(document.body);
 });
 
 // Оптимизированный MutationObserver
 const observer = new MutationObserver(mutations => {
-  let needsScan = false;
-  
+  if (!isEnabled) return;
+  let processed = new Set();
   for (const mutation of mutations) {
     // Игнорируем изменения в наших qr-элементах
     if (mutation.target.classList?.contains('qr-path')) continue;
-    
     // Игнорируем изменения атрибутов и характеристик
     if (mutation.type === 'attributes') continue;
-    
-    needsScan = true;
-    break;
-  }
-  
-  if (needsScan && isEnabled) {
-    scanForPaths();
+    // Для добавленных нод
+    if (mutation.addedNodes && mutation.addedNodes.length > 0) {
+      mutation.addedNodes.forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          if (!processed.has(node)) {
+            scanForPathsIn(node);
+            processed.add(node);
+          }
+        } else if (node.nodeType === Node.TEXT_NODE) {
+          if (!processed.has(node.parentNode)) {
+            scanForPathsIn(node.parentNode);
+            processed.add(node.parentNode);
+          }
+        }
+      });
+    } else {
+      // Для изменений текста или других случаев
+      if (!processed.has(mutation.target)) {
+        scanForPathsIn(mutation.target);
+        processed.add(mutation.target);
+      }
+    }
   }
 });
 
@@ -143,15 +163,17 @@ observer.observe(document.body, {
 chrome.storage.onChanged.addListener(changes => {
   if ('enabled' in changes) {
     isEnabled = changes.enabled.newValue;
+    console.log(`${LOG_TAG} Статус изменен на: ${isEnabled}`);
     if (!isEnabled) {
       window.removeQRPopup();
       removeAllQRPaths(); // Удаляем все подсвеченные ссылки
     } else {
-      scanForPaths();
+      scanForPathsIn(document.body);
     }
   }
   
   if ('baseUrl' in changes) {
-    scanForPaths();
+    console.log(`${LOG_TAG} Базовый URL изменен на: ${changes.baseUrl.newValue}`);
+    scanForPathsIn(document.body);
   }
 });
