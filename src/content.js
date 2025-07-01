@@ -1,4 +1,4 @@
-const PATH_REGEX = /(https?:\/\/[^\s"'<>]+)|(?:\b|\/)(?:[a-z0-9\-._~!$&'()*+,;=:@]+)(?:\/[a-z0-9\-._~!$&'()*+,;=:@]+)*(\?[a-z0-9\-._~!$&'()*+,;=:@%&=+]*|)/gi;
+const PATH_REGEX = /https?:\/\/[\S"'<>]+|\/[\S"'<>]*/g;
 const LOG_TAG = '[QR-Plugin]';
 let isEnabled = false;
 
