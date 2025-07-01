@@ -2,29 +2,6 @@ const PATH_REGEX = /(https?:\/\/[^\s"'<>]+)|(?:\b|\/)(?:[a-z0-9\-._~!$&'()*+,;=:
 let qrLibLoaded = false;
 let isEnabled = false;
 
-// Загрузка библиотеки QRCode
-function loadQRCodeLib(callback) {
-  if (qrLibLoaded) {
-    callback();
-    return;
-  }
-
-  if (typeof QRCode !== 'undefined') {
-    qrLibLoaded = true;
-    callback();
-    return;
-  }
-
-  const script = document.createElement('script');
-  script.src = chrome.runtime.getURL('qrcode.min.js');
-  script.onload = () => {
-    qrLibLoaded = true;
-    callback();
-  };
-  script.onerror = () => console.error('Failed to load QRCode library');
-  document.head.appendChild(script);
-}
-
 function createQRPopup(url, x, y) {
   const existing = document.getElementById('qr-popup');
   if (existing) existing.remove();
@@ -62,22 +39,20 @@ function createQRPopup(url, x, y) {
   try {
     new URL(url);
     
-    loadQRCodeLib(() => {
-      if (typeof QRCode !== 'undefined') {
-        new QRCode(qrContainer, {
-          text: url,
-          width: 192,
-          height: 192,
-          colorDark: "#000000",
-          colorLight: "#ffffff",
-          correctLevel: QRCode.CorrectLevel.H
-        });
-      } else {
-        qrContainer.innerHTML = `<div style="width:192px;height:192px;display:flex;align-items:center;justify-content:center;color:red;font-size:12px;">
-          QR lib not loaded
-        </div>`;
-      }
-    });
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(qrContainer, {
+        text: url,
+        width: 192,
+        height: 192,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } else {
+      qrContainer.innerHTML = `<div style="width:192px;height:192px;display:flex;align-items:center;justify-content:center;color:red;font-size:12px;">
+        QR lib not loaded
+      </div>`;
+    }
   } catch (e) {
     qrContainer.innerHTML = `<div style="width:192px;height:192px;display:flex;align-items:center;justify-content:center;color:red;font-size:12px;">
       Invalid URL

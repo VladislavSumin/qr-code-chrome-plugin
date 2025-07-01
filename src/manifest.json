@@ -36,5 +36,11 @@
       },
       "description": "Toggle QR code generation"
     }
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["qrcode.min.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
