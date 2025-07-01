@@ -2,6 +2,15 @@ const PATH_REGEX = /(https?:\/\/[^\s"'<>]+)|(?:\b|\/)(?:[a-z0-9\-._~!$&'()*+,;=:
 const LOG_TAG = '[QR-Plugin]';
 let isEnabled = false;
 
+// Список тегов, которые нужно игнорировать при обработке текстовых нод
+const IGNORED_TAGS = ['STYLE', 'SCRIPT', 'SVG', 'META', 'NOSCRIPT', 'OPTION', 'TEXTAREA'];
+
+function isTextNodeValid(node) {
+  if (!node.parentElement) return false;
+  if (IGNORED_TAGS.includes(node.parentElement.tagName)) return false;
+  return true;
+}
+
 // Функция для добавления обработчиков только к новым элементам
 function attachListenersToNewElements() {
   document.querySelectorAll('.qr-path:not([data-has-listener])').forEach(el => {
@@ -63,8 +72,9 @@ function scanForPathsIn(root) {
 
   while (walker.nextNode()) {
     const node = walker.currentNode;
-    nodeCount++;
+    if (!isTextNodeValid(node)) continue;
     const content = node.textContent;
+    nodeCount++;
 
     // Сначала собираем все совпадения
     let matches = [];
@@ -104,6 +114,7 @@ function scanForPathsIn(root) {
 
 // Функция для удаления всех подсвеченных ссылок
 function removeAllQRPaths() {
+  console.log(`${LOG_TAG} Удаление всех подсвеченных ссылок`);
   document.querySelectorAll('.qr-path').forEach(el => {
     const parent = el.parentNode;
     if (!parent) return;
@@ -122,6 +133,7 @@ chrome.storage.sync.get(['enabled'], ({ enabled = true }) => {
 // Оптимизированный MutationObserver
 const observer = new MutationObserver(mutations => {
   if (!isEnabled) return;
+  console.log(`${LOG_TAG} MutationObserver triggered, mutations: ${mutations.length}`);
   let processed = new Set();
   for (const mutation of mutations) {
     // Игнорируем изменения в наших qr-элементах
